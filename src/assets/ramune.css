@@ -1,0 +1,220 @@
+/* Ramune UI — Design Contract v2.0 / Ramune-prefixed tokens & base styles
+ * テーマ切替は <html class="ram-light" | "ram-dark"> で行う。
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── 1. Font stacks ─────────────────────────────────────────── */
+:root {
+  --ram-font-display:
+    "Fredoka", "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  --ram-font-body:
+    "DM Sans", "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, sans-serif;
+  --ram-font-mono: "JetBrains Mono", "Menlo", "Consolas", "Noto Sans JP", monospace;
+
+  /* Spacing (4px baseline) */
+  --ram-space-0: 0px;
+  --ram-space-1: 4px;
+  --ram-space-2: 8px;
+  --ram-space-3: 12px;
+  --ram-space-4: 16px;
+  --ram-space-5: 20px;
+  --ram-space-6: 24px;
+  --ram-space-7: 32px;
+  --ram-space-8: 40px;
+  --ram-space-9: 48px;
+  --ram-space-10: 64px;
+  --ram-space-11: 80px;
+  --ram-space-12: 120px;
+
+  /* Breakpoints (Tailwind 標準値に準拠 / 参照用) */
+  --ram-bp-sm: 640px;
+  --ram-bp-md: 768px;
+  --ram-bp-lg: 1024px;
+
+  /* Radius */
+  --ram-radius-none: 0;
+  --ram-radius-xs: 6px;
+  --ram-radius-sm: 10px;
+  --ram-radius-md: 14px;
+  --ram-radius-lg: 22px;
+  --ram-radius-xl: 28px;
+  --ram-radius-pill: 9999px;
+
+  /* Motion */
+  --ram-motion-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+  --ram-motion-base: 240ms cubic-bezier(0.4, 0, 0.2, 1);
+  --ram-motion-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --ram-motion-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ram-motion-enter: 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── 2. Light theme（主役） ─────────────────────────────────── */
+:root,
+html.ram-light {
+  color-scheme: light;
+  --ram-bg: #f0ede8;
+  --ram-bg-soft: #f7f4ef;
+  --ram-surface: #ffffff;
+  --ram-text: #1a1a2e;
+  --ram-text-soft: #2c2b40;
+  --ram-muted: #5c5a6f;
+  --ram-subtle: #9b99b0;
+  --ram-border: rgba(26, 26, 46, 0.08);
+  --ram-border-strong: rgba(26, 26, 46, 0.14);
+
+  --ram-primary: #ff3366;
+  --ram-primary-soft: rgba(255, 51, 102, 0.12);
+  --ram-secondary: #7c3aed;
+  --ram-accent: #00b894;
+  --ram-sun: #f59e0b;
+  --ram-sky: #3b82f6;
+  --ram-coral: #ef4444;
+  --ram-success: #10b981;
+  --ram-warning: #f59e0b;
+  --ram-danger: #ef4444;
+
+  --ram-glass: rgba(255, 255, 255, 0.45);
+  --ram-glass-strong: rgba(255, 255, 255, 0.62);
+  --ram-glass-border: rgba(255, 255, 255, 0.7);
+  --ram-glass-inner: rgba(255, 255, 255, 0.3);
+  --ram-glass-highlight: rgba(255, 255, 255, 0.9);
+
+  --ram-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --ram-shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+  --ram-shadow-focus: 0 0 0 3px rgba(0, 0, 0, 0.07);
+
+  /* Glass code background */
+  --ram-code-bg: rgba(26, 26, 46, 0.04);
+}
+
+/* ── 3. Dark theme（反転ではなく再定義） ────────────────────── */
+html.ram-dark {
+  color-scheme: dark;
+  --ram-bg: #0e0e1a;
+  --ram-bg-soft: #15152a;
+  --ram-surface: #1a1a2e;
+  --ram-text: #f0eeff;
+  --ram-text-soft: #d6d4ea;
+  --ram-muted: #8b89a6;
+  --ram-subtle: #686688;
+  --ram-border: rgba(240, 238, 255, 0.08);
+  --ram-border-strong: rgba(240, 238, 255, 0.14);
+
+  --ram-primary: #ff4477;
+  --ram-primary-soft: rgba(255, 68, 119, 0.16);
+  --ram-secondary: #9055ff;
+  --ram-accent: #00e5b0;
+  --ram-sun: #ffbe2e;
+  --ram-sky: #5b9fff;
+  --ram-coral: #ff7070;
+  --ram-success: #34d399;
+  --ram-warning: #fbbf24;
+  --ram-danger: #f87171;
+
+  --ram-glass: rgba(255, 255, 255, 0.06);
+  --ram-glass-strong: rgba(255, 255, 255, 0.1);
+  --ram-glass-border: rgba(255, 255, 255, 0.12);
+  --ram-glass-inner: rgba(255, 255, 255, 0.04);
+  --ram-glass-highlight: rgba(255, 255, 255, 0.2);
+
+  --ram-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --ram-shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.4);
+  --ram-shadow-focus: 0 0 0 3px rgba(255, 255, 255, 0.08);
+
+  --ram-code-bg: rgba(255, 255, 255, 0.08);
+}
+
+/* ── 4. Base — 日本語 UI 前提の禁則・折り返し ─────────────── */
+html[lang="ja"] {
+  line-break: strict;
+  word-break: normal;
+  overflow-wrap: anywhere;
+  font-kerning: normal;
+}
+
+body {
+  background: var(--ram-bg);
+  color: var(--ram-text);
+  font-family: var(--ram-font-body);
+  word-break: normal;
+  overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--ram-font-display);
+  text-wrap: balance;
+  word-break: normal;
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+
+p,
+li,
+blockquote,
+dd {
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+
+@supports (word-break: auto-phrase) {
+  h1:lang(ja),
+  h2:lang(ja),
+  h3:lang(ja),
+  h4:lang(ja),
+  h5:lang(ja),
+  h6:lang(ja),
+  p:lang(ja),
+  li:lang(ja),
+  blockquote:lang(ja) {
+    word-break: auto-phrase;
+  }
+}
+
+/* URL・ID・コードの折り返し */
+.ram-url,
+.ram-code-token,
+.ram-product-name {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+/* ── 5. Focus ring ──────────────────────────────────────── */
+:where(button, a, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--ram-sky);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── 6. Reduced motion ──────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── 7. Keyframes ───────────────────────────────────────── */
+@keyframes ram-blob {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(20px, -16px) scale(1.08);
+  }
+}
