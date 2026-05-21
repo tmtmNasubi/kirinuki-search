@@ -2,6 +2,10 @@
 
 This template should help get you started developing with Vue 3 in Vite.
 
+## Cloudflare deployment
+
+Cloudflare Workers + Static Assets の設定とローカル確認手順は [docs/cloudflare-deployment.md](docs/cloudflare-deployment.md) にまとめています。
+
 ## Recommended IDE Setup
 
 [VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
