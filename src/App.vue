@@ -2,28 +2,36 @@
 import RamInputForm from "./components/Ram/RamInputForm.vue";
 import RamMixedHeading from "./components/Ram/RamMixedHeading.vue";
 import RamBadge from "./components/Ram/RamBadge.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { getClips, type SearchResult } from "./composables/searchApi";
 import ClipCard from "./components/ClipCard.vue";
+import TurnstileWidget from "./components/TurnstileWidget.vue";
 
 const search = async (url: string) => {
   searchError.value = undefined;
   isSearching.value = true;
 
   try {
-    clips.value = await getClips(url);
+    clips.value = await getClips(url, turnstileToken.value);
   } catch (error) {
     clips.value = [];
     searchError.value =
       error instanceof Error ? error.message : "切り抜き検索に失敗しました。";
   } finally {
     isSearching.value = false;
+    turnstile.value?.reset();
   }
 };
 
 const clips = ref<SearchResult[]>([]);
 const searchError = ref<string>();
 const isSearching = ref(false);
+const turnstileToken = ref<string>();
+const turnstile = ref<InstanceType<typeof TurnstileWidget>>();
+const turnstileSitekey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+const isTurnstilePending = computed(
+  () => Boolean(turnstileSitekey) && !turnstileToken.value,
+);
 </script>
 
 <template>
@@ -47,8 +55,17 @@ const isSearching = ref(false);
       inputmode="url"
       autocomplete="url"
       :error="searchError"
+      :disabled="isTurnstilePending"
       :loading="isSearching"
       @submit="search"
+    />
+    <TurnstileWidget
+      ref="turnstile"
+      class="turnstile"
+      :sitekey="turnstileSitekey"
+      @verified="turnstileToken = $event"
+      @expired="turnstileToken = undefined"
+      @failed="turnstileToken = undefined"
     />
     <div v-if="clips.length" class="clips">
       <ClipCard v-for="clip in clips" :key="clip.id.videoId" :clip="clip" />
@@ -103,6 +120,11 @@ const isSearching = ref(false);
   display: flex;
   flex-direction: column;
   gap: var(--ram-space-4);
+}
+
+.turnstile {
+  width: fit-content;
+  max-width: 100%;
 }
 
 .footer {
