@@ -10,17 +10,12 @@ const props = defineProps<{ clip: SearchResult }>();
 
 const width = useWindowSize().width;
 
-const thumbnail = computed(() => {
-  if (width.value < 1120) return props.clip.snippet.thumbnails.medium;
-  else return props.clip.snippet.thumbnails.high;
-});
-
 const url = `https://www.youtube.com/watch?v=${props.clip.id.videoId}`;
 
 const channelUrl = `https://www.youtube.com/${props.clip.snippet.channelId}`;
 
 const titleValiant = computed(() => {
-  return width.value < 1120 ? "headingL" : "headingS";
+  return width.value < 1120 ? "headingS" : "headingL";
 });
 </script>
 
@@ -28,7 +23,10 @@ const titleValiant = computed(() => {
   <RamGlass hover strong>
     <a :href="url" target="_blank" class="card">
       <div class="card__inner">
-        <img :src="thumbnail.url" class="thumbnail" />
+        <img
+          :src="props.clip.snippet.thumbnails.medium.url"
+          class="thumbnail"
+        />
         <div class="card__text">
           <RamType :variant="titleValiant">
             {{ clip.snippet.title }}
