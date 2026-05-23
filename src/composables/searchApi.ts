@@ -102,16 +102,31 @@ const normalizeSearchResult = (result: SearchResult): SearchResult => ({
 const shouldUseDummySearch =
   import.meta.env.DEV && import.meta.env.VITE_USE_REAL_SEARCH !== "true";
 
-export const getClips = async (url: string): Promise<SearchResult[]> => {
+export const getClips = async (
+  url: string,
+  turnstileToken?: string,
+): Promise<SearchResult[]> => {
   const videoId = extractYouTubeVideoId(url);
 
   if (shouldUseDummySearch) {
     return dummyYoutubeSearchResults.map(normalizeSearchResult);
   }
 
+  if (!turnstileToken) {
+    throw new Error("認証に失敗しました。ページを再読み込みして再度お試しください。");
+  }
+
   const endpoint = new URL("/api/search", window.location.origin);
-  endpoint.searchParams.set("q", videoId);
-  const response = await fetch(endpoint);
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      videoId,
+      turnstileToken,
+    }),
+  });
 
   if (!response.ok) {
     throw new Error(
