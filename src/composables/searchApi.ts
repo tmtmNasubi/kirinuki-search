@@ -1,3 +1,5 @@
+import { dummyYoutubeSearchResults } from "@/mocks/youtubeSearchResults";
+
 export type SearchResult = {
   kind: string;
   etag: string;
@@ -97,8 +99,16 @@ const normalizeSearchResult = (result: SearchResult): SearchResult => ({
   },
 });
 
+const shouldUseDummySearch =
+  import.meta.env.DEV && import.meta.env.VITE_USE_REAL_SEARCH !== "true";
+
 export const getClips = async (url: string): Promise<SearchResult[]> => {
   const videoId = extractYouTubeVideoId(url);
+
+  if (shouldUseDummySearch) {
+    return dummyYoutubeSearchResults.map(normalizeSearchResult);
+  }
+
   const endpoint = new URL("/api/search", window.location.origin);
   endpoint.searchParams.set("q", videoId);
   const response = await fetch(endpoint);

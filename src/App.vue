@@ -4,7 +4,6 @@ import RamMixedHeading from "./components/Ram/RamMixedHeading.vue";
 import RamBadge from "./components/Ram/RamBadge.vue";
 import { ref } from "vue";
 import { getClips, type SearchResult } from "./composables/searchApi";
-import RamGlass from "./components/Ram/RamGlass.vue";
 import ClipCard from "./components/ClipCard.vue";
 
 const search = async (url: string) => {
@@ -28,7 +27,7 @@ const isSearching = ref(false);
 </script>
 
 <template>
-  <main>
+  <main class="container">
     <section class="title">
       <div class="title__inner">
         <RamBadge tone="primary" variant="soft">v1.0 · 2026</RamBadge>
@@ -52,28 +51,36 @@ const isSearching = ref(false);
       @submit="search"
     />
     <div v-if="clips.length" class="clips">
-      <RamGlass v-for="clip in clips" :key="clip.kind">
-        <ClipCard :clip="clip" />
-      </RamGlass>
+      <ClipCard v-for="clip in clips" :key="clip.id.videoId" :clip="clip" />
     </div>
+    <footer class="footer">
+      <div class="footer__brand">
+        <span class="footer__label">KIRINUKI SEARCH</span>
+        <p class="footer__copy">
+          配信URLから関連する切り抜きを探すためのシンプルな検索ツールです。
+        </p>
+        <a
+          href="https://github.com/tmtmNasubi/kirinuki-search"
+          target="_blank"
+          rel="noreferrer"
+          class="footer__link"
+        >
+          GitHub
+        </a>
+        <p class="footer__meta">© 2026 Kirinuki Search / Nasubit</p>
+      </div>
+    </footer>
   </main>
 </template>
 
 <style scoped>
-main {
+.container {
   display: flex;
   flex-direction: column;
   gap: var(--ram-space-7);
   padding: var(--ram-space-4);
   margin-inline: auto;
   min-height: 100vh;
-}
-
-@media (min-width: 768px) {
-  main {
-    gap: var(--ram-space-10);
-    padding: var(--ram-space-6);
-  }
 }
 
 .title {
@@ -90,10 +97,63 @@ main {
   position: relative;
   z-index: 1;
   display: grid;
+}
+
+.clips {
+  display: flex;
+  flex-direction: column;
   gap: var(--ram-space-4);
 }
 
+.footer {
+  display: grid;
+  gap: var(--ram-space-4);
+  margin-top: auto;
+  padding-block: var(--ram-space-6) var(--ram-space-2);
+  border-top: 1px solid var(--ram-border);
+  color: var(--ram-muted);
+}
+
+.footer__brand {
+  display: grid;
+  gap: var(--ram-space-2);
+}
+
+.footer__label {
+  width: fit-content;
+  font-family: var(--ram-font-display);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ram-primary);
+  letter-spacing: 0.07em;
+}
+
+.footer__copy,
+.footer__meta {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.footer__link {
+  color: var(--ram-text-soft);
+  font-family: var(--ram-font-display);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.footer__meta {
+  color: var(--ram-subtle);
+}
+
 @media (min-width: 768px) {
+  .container {
+    gap: var(--ram-space-10);
+    padding: var(--ram-space-6);
+    max-width: 1120px;
+  }
   .title {
     min-height: 25svh;
     padding: var(--ram-space-10) var(--ram-space-6);
@@ -101,11 +161,13 @@ main {
   .title__inner {
     gap: var(--ram-space-5);
   }
-}
-
-.clips {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ram-space-4);
+  .footer {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    padding-block-start: var(--ram-space-8);
+  }
+  .footer__meta {
+    grid-column: 1 / -1;
+  }
 }
 </style>
