@@ -59,14 +59,16 @@ const isTurnstilePending = computed(
       :loading="isSearching"
       @submit="search"
     />
-    <TurnstileWidget
-      ref="turnstile"
-      class="turnstile"
-      :sitekey="turnstileSitekey"
-      @verified="turnstileToken = $event"
-      @expired="turnstileToken = undefined"
-      @failed="turnstileToken = undefined"
-    />
+    <div class="trunstile__area">
+      <TurnstileWidget
+        ref="turnstile"
+        class="turnstile"
+        :sitekey="turnstileSitekey"
+        @verified="turnstileToken = $event"
+        @expired="turnstileToken = undefined"
+        @failed="turnstileToken = undefined"
+      />
+    </div>
     <div v-if="clips.length" class="clips">
       <ClipCard v-for="clip in clips" :key="clip.id.videoId" :clip="clip" />
     </div>
@@ -125,6 +127,10 @@ const isTurnstilePending = computed(
 .turnstile {
   width: fit-content;
   max-width: 100%;
+}
+
+.trunstile__area {
+  margin: auto;
 }
 
 .footer {
