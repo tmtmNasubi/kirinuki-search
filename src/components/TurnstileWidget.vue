@@ -90,7 +90,9 @@ onBeforeUnmount(() => {
 defineExpose({
   reset: () => {
     emit("expired");
-    window.turnstile?.reset(widgetId.value);
+    if (widgetId.value) {
+      window.turnstile?.reset(widgetId.value);
+    }
   },
 });
 </script>
