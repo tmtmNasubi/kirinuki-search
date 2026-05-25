@@ -12,7 +12,7 @@ const width = useWindowSize().width;
 
 const url = `https://www.youtube.com/watch?v=${props.clip.id.videoId}`;
 
-const channelUrl = `https://www.youtube.com/${props.clip.snippet.channelId}`;
+const channelUrl = `https://www.youtube.com/channel/${props.clip.snippet.channelId}`;
 
 const titleValiant = computed(() => {
   return width.value < 1120 ? "headingS" : "headingL";

@@ -6,6 +6,7 @@ import { computed, ref } from "vue";
 import { getClips, type SearchResult } from "./composables/searchApi";
 import ClipCard from "./components/ClipCard.vue";
 import TurnstileWidget from "./components/TurnstileWidget.vue";
+import { trackSearch, trackSearchError } from "./composables/analytics";
 
 const search = async (url: string) => {
   searchError.value = undefined;
@@ -13,10 +14,12 @@ const search = async (url: string) => {
 
   try {
     clips.value = await getClips(url, turnstileToken.value);
+    trackSearch(clips.value.length);
   } catch (error) {
     clips.value = [];
     searchError.value =
       error instanceof Error ? error.message : "切り抜き検索に失敗しました。";
+    trackSearchError();
   } finally {
     isSearching.value = false;
     turnstile.value?.reset();
@@ -86,6 +89,7 @@ const isTurnstilePending = computed(
         >
           GitHub
         </a>
+        <a href="/privacy.html" class="footer__link">プライバシーポリシー</a>
         <p class="footer__meta">© 2026 Kirinuki Search / Nasubit</p>
       </div>
     </footer>

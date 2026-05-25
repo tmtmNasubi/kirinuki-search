@@ -1,58 +1,97 @@
 # kirinuki-search
 
-This template should help get you started developing with Vue 3 in Vite.
+配信URLから関連するYouTube切り抜きを検索するVue/Viteアプリです。
 
-## Cloudflare deployment
+フロントエンドは静的アセットとしてビルドし、Cloudflare Workers Static Assetsで配信します。検索APIはブラウザから外部サービスを直接叩かず、同一オリジンの`POST /api/search`を経由してCloudflare service bindingの`yt-streamback`へ中継します。
 
-Cloudflare Workers + Static Assets の設定とローカル確認手順は [docs/cloudflare-deployment.md](docs/cloudflare-deployment.md) にまとめています。
+## Stack
 
-## Recommended IDE Setup
+- Vue 3
+- Vite
+- TypeScript
+- Cloudflare Workers Static Assets
+- Cloudflare Turnstile
+- Vitest
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Requirements
 
-## Recommended Browser Setup
+- Node.js 24
+- pnpm 10.11.1
+- Wrangler
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+## Setup
 
 ```sh
 pnpm install
+cp .env.example .env.local
 ```
 
-### Compile and Hot-Reload for Development
+`.env.local`には必要に応じて以下を設定します。
+
+```sh
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+VITE_TURNSTILE_SITE_KEY=...
+VITE_USE_REAL_SEARCH=false
+```
+
+通常のVite開発サーバーでは、`VITE_USE_REAL_SEARCH=true`を指定しない限りダミー検索結果を返します。
+`VITE_GA_MEASUREMENT_ID`を設定すると、本番ビルドでGoogle Analytics 4のページビューと検索イベントを計測します。未設定または開発環境では送信しません。
+Cookie利用については、`public/privacy.html`のプライバシーポリシーで告知します。
+
+## Development
 
 ```sh
 pnpm dev
 ```
 
-### Type-Check, Compile and Minify for Production
+実際のWorker、Turnstile検証、`SEARCH_SERVICE` bindingを含めて確認する場合はWranglerを使います。
 
 ```sh
 pnpm build
+pnpm wrangler dev
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+Workerでは`TURNSTILE_SECRET_KEY`が必要です。
 
 ```sh
-pnpm test:unit
+wrangler secret put TURNSTILE_SECRET_KEY
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## Scripts
 
 ```sh
-pnpm lint
+pnpm dev          # Vite dev server
+pnpm build        # type-check + production build
+pnpm test:unit    # unit tests
+pnpm lint         # oxlint + eslint
+pnpm deploy       # build + wrangler deploy
 ```
+
+## API
+
+フロントエンドは同一オリジンのAPIだけを呼びます。
+
+```txt
+POST /api/search
+```
+
+Request body:
+
+```json
+{
+  "videoId": "dQw4w9WgXcQ",
+  "turnstileToken": "TOKEN"
+}
+```
+
+WorkerはTurnstile tokenを検証したあと、service binding経由で`yt-streamback`の`GET /search?video_id=...`へ中継します。
+
+## Deployment
+
+本番はCloudflare Workers Static Assetsで配信します。
+
+```sh
+pnpm deploy
+```
+
+Cloudflare構成やローカル確認の詳細は[docs/cloudflare-deployment.md](docs/cloudflare-deployment.md)を参照してください。
